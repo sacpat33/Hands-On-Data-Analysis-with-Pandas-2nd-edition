@@ -181,4 +181,95 @@ select DepartmentId, count(Salary) as SalaryCount from sql_exc.employees where M
 select count(distinct DepartmentId) from sql_exc.employees;
 -- sum
 select sum(Salary) from sql_exc.employees;
+
 -- Section 6.12: Select with condition of multiple values from column
+select * from sql_exc.cars where status in ('WAITING', 'WORKING');
+
+-- equivaleny Querry 
+select * from sql_exc.cars where (status = 'WAITING' or status = 'WORKING');
+
+-- i.e. value IN ( <value list> ) is a shorthand for disjunction (logical OR)
+
+-- Section 6.13: Get aggregated result for row groups
+-- Sample quuerry (Not to run)
+select category, count(*) as item_count 
+from item
+group by category;
+
+-- Example Query 
+select DepartmentId, avg(Salary) as SalaryAVG
+from sql_exc.employees 
+group by DepartmentId;
+
+-- Example Query with additions 
+select e.DepartmentId, d.Name as DeptName, avg(e.Salary) as SalaryAVG
+from sql_exc.employees e
+join sql_exc.department d
+on e.DepartmentId = d.Id
+group by DepartmentId;
+
+-- There WHERE clause can also be used with GROUP BY, but WHERE filters out records before any grouping is done:
+-- sample query (not to run)
+select department, AVG(income)
+from employees
+where departement <> 'Accounts'
+group by department;
+
+-- If you need to filter the results after the grouping has been done, e.g, to see only departments whose average
+-- income is larger than 1000, you need to use the HAVING clause
+-- sample query (not to run)
+select department, AVG(income)
+from employees
+where departement <> 'Accounts'
+group by department
+having AVG(income) > 1000;
+
+-- Example Query (to run)
+select DepartmentId, avg(Salary) as SalaryAVG
+from sql_exc.employees 
+where ManagerId is not null
+group by DepartmentId
+having SalaryAVG > 500;
+
+-- Section 6.14: Selection with sorted Results
+-- Sample query (to run)
+select * from sql_exc.employees order by LName;
+select * from sql_exc.employees order by LName desc;
+select * from sql_exc.employees order by LName asc;
+
+-- multi coloumn sorting 
+select * from sql_exc.employees order by LName asc, FName asc;
+-- sorting by using the coloumn number 
+
+select Id, FName, LName, PhoneNumber from sql_exc.employees order by 3 desc;
+
+-- You may also embed a CASE statement in the ORDER BY clause (sorting at top)
+select Id, FName, LName, PhoneNumber from sql_exc.employees order by case when LName = 'Smith' then 0 else 1 end asc;
+
+-- Section 6.15: Selecting with null
+select FName from sql_exc.employees where ManagerId is null;
+
+-- Section 6.16: Select distinct (unique values only)
+select distinct Status from sql_exc.cars;
+select distinct ContinentCode from sql_exc.countries;
+
+-- Section 6.17: Select rows from multiple tables
+-- This is called cross product in SQL it is same as cross product in sets
+SELECT *
+FROM
+table1,
+table2;
+
+SELECT
+table1.column1,
+table1.column2,
+table2.column1
+FROM
+table1,
+table2;
+
+/* This is called cross product in SQL it is same as cross product in sets
+These statements return the selected columns from multiple tables in one query.
+There is no specific relationship between the columns returned from each table. */
+
+select * from sql_exc.employees, sql_exc.department
